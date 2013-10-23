@@ -1,0 +1,9 @@
+name: AGMoney
+main: me.libraryaddict.Currency.CurrencyMain
+version: 1
+commands:
+  bal:
+    aliases: [balance]
+  pay:
+  money:
+  moneylog:
