@@ -11,6 +11,7 @@ public class Transfer {
     public static String SIGN_PURCHASE = "sign purchase";
     public static String MONEY_RESET = "money reset";
     public static String MONEY_GIVE = "money give";
+    public static String MONEY_SET = "money set";
     public static String SILENT = null;
 
     Transfer(String send, String receive, int money, String msg) {

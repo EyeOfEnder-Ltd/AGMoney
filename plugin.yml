@@ -1,9 +1,15 @@
 name: AGMoney
 main: me.libraryaddict.Currency.CurrencyMain
-version: 1.0.1
+version: 1.1.0
 commands:
   bal:
     aliases: [balance]
   pay:
+    description: Pay a player
   money:
+    description: Description
   moneylog:
+    description: Description
+  setbal:
+    description: Set a players balance
+    usage: /<command> <player> <balance>

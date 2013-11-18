@@ -271,11 +271,9 @@ public class CurrencyMain extends JavaPlugin implements Listener {
     public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
         if (cmd.getName().equalsIgnoreCase("bal")) {
             getBalance(sender, args);
-        }
-        if (cmd.getName().equalsIgnoreCase("pay")) {
+        } else if (cmd.getName().equalsIgnoreCase("pay")) {
             pay(sender, args);
-        }
-        if ((cmd.getName().equalsIgnoreCase("moneylog")) && (sender.isOp())) {
+        } else if ((cmd.getName().equalsIgnoreCase("moneylog")) && (sender.isOp())) {
             if (args.length == 0) {
                 sender.sendMessage(ChatColor.LIGHT_PURPLE + "You need to use a arguement. Or its gonna fucking spam");
                 return true;
@@ -286,8 +284,31 @@ public class CurrencyMain extends JavaPlugin implements Listener {
                 for (int i = lines.size() - 1; (i >= 0) && (i >= lines.size() - 20); i--)
                     sender.sendMessage((String) lines.get(i));
             }
-        }
-        if (cmd.getName().equalsIgnoreCase("money")) {
+        } else if (cmd.getName().equalsIgnoreCase("setbal")) {
+            if (sender.isOp()) return false;
+            if (args.length < 2) {
+                sender.sendMessage(ChatColor.RED + "Usage: /setbal <player> <balance>");
+                return true;
+            }
+
+            Player target = Bukkit.getPlayer(args[0]);
+
+            if (target == null) {
+                sender.sendMessage(ChatColor.RED + "Invalid player.");
+                return true;
+            }
+
+            int money = 0;
+            if (isNumeric(args[1])) {
+                money = Integer.parseInt(args[1]);
+            } else {
+                sender.sendMessage(ChatColor.GREEN + "That is not a number");
+                return true;
+            }
+
+            balance.put(target.getName(), money);
+            transfers.add(new Transfer(null, target.getName(), money, Transfer.MONEY_SET));
+        } else if (cmd.getName().equalsIgnoreCase("money")) {
             if (args.length == 0) {
                 getBalance(sender, args);
                 return true;
