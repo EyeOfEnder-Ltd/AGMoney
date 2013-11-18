@@ -300,12 +300,15 @@ public class CurrencyMain extends JavaPlugin implements Listener {
             if (isNumeric(args[1])) {
                 money = Integer.parseInt(args[1]);
             } else {
-                sender.sendMessage(ChatColor.GREEN + "That is not a number");
+                sender.sendMessage(ChatColor.RED + "That is not a number");
                 return true;
             }
 
+            int diff = money - balance.get(target.getName());
+
             balance.put(target.getName(), money);
-            transfers.add(new Transfer(null, target.getName(), money, Transfer.MONEY_SET));
+            transfers.add(new Transfer(null, target.getName(), diff, Transfer.MONEY_SET));
+            sender.sendMessage(ChatColor.GREEN + "Set " + target.getDisplayName() + "'s balance to $" + money + ".");
         } else if (cmd.getName().equalsIgnoreCase("money")) {
             if (args.length == 0) {
                 getBalance(sender, args);

@@ -26,7 +26,7 @@ public class Api {
     public void withdraw(String player, int amount) {
         if (!main.balance.contains(player)) main.balance.put(player, 0);
         main.balance.put(player, main.balance.get(player) - amount);
-        main.transfers.add(new Transfer(player, null, amount, Transfer.SILENT));
+        main.transfers.add(new Transfer(player, null, -amount, Transfer.SILENT));
     }
 
     public void refresh(String player) {
