@@ -46,8 +46,8 @@ public class MoneySaveThread extends Thread {
         System.out.println("Money Save Thread started");
         SQLconnect();
         while (true) {
-            if (CurrencyMain.transfers.peek() != null) {
-                final Transfer transfer = (Transfer) CurrencyMain.transfers.poll();
+            if (plugin.transfers.peek() != null) {
+                final Transfer transfer = plugin.transfers.poll();
                 String[] name = { transfer.getSender(), transfer.getReceiver() };
                 Integer[] amount = { Integer.valueOf(-transfer.getAmount()), Integer.valueOf(transfer.getAmount()) };
                 transfer.setStatus(true);
@@ -66,7 +66,7 @@ public class MoneySaveThread extends Thread {
                             statement = "UPDATE AGMoney SET Money='" + (money + amount[n].intValue()) + "' WHERE `Name` = '" + name[n] + "' ;";
                             stamt.executeUpdate(statement);
                             stamt.close();
-                            CurrencyMain.balance.put(name[n], Integer.valueOf(money + amount[n].intValue()));
+                            plugin.balance.put(name[n], money + amount[n]);
                         } catch (SQLException ex) {
                             transfer.setStatus(false);
                             transfer.setError(ex.getMessage());
@@ -85,7 +85,7 @@ public class MoneySaveThread extends Thread {
                     }
                 });
             }
-            if (CurrencyMain.transfers.peek() == null) try {
+            if (plugin.transfers.peek() == null) try {
                 Thread.currentThread();
                 Thread.sleep(1000L);
             } catch (InterruptedException localInterruptedException) {

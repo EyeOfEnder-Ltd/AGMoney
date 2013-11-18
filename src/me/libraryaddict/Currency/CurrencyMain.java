@@ -30,9 +30,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 import com.google.common.collect.Lists;
 
 public class CurrencyMain extends JavaPlugin implements Listener {
-    public static ConcurrentLinkedQueue<Transfer> transfers = new ConcurrentLinkedQueue<Transfer>();
-    public static ConcurrentLinkedQueue<String> refreshers = new ConcurrentLinkedQueue<String>();
-    public static ConcurrentHashMap<String, Integer> balance = new ConcurrentHashMap<String, Integer>();
+    public ConcurrentLinkedQueue<Transfer> transfers = new ConcurrentLinkedQueue<Transfer>();
+    public ConcurrentLinkedQueue<String> refreshers = new ConcurrentLinkedQueue<String>();
+    public ConcurrentHashMap<String, Integer> balance = new ConcurrentHashMap<String, Integer>();
     MoneyLoadThread loadThread = new MoneyLoadThread(this);
     MoneySaveThread saveThread = new MoneySaveThread(this);
     public String SQL_USER;
@@ -170,7 +170,7 @@ public class CurrencyMain extends JavaPlugin implements Listener {
             if (item == null) return ChatColor.RED + "Error, Can't fetch item from database";
             int price = Integer.parseInt(sign.getLine(3).substring(1));
             item.setAmount(amount);
-            if (!canAfford(p, price)) return ChatColor.RED + "Can't afford to purchase this item!";
+            if (!api.canAfford(p, price)) return ChatColor.RED + "Can't afford to purchase this item!";
             if (canFit(p, new ItemStack[] { item })) {
                 item.setAmount(1);
                 for (int i = 0; i < amount; i++)
@@ -194,7 +194,7 @@ public class CurrencyMain extends JavaPlugin implements Listener {
                 if ((item == null) || (item.getType() == Material.AIR) || (!enchant.canEnchantItem(item))) {
                     return ChatColor.RED + "Can't enchant item in hand!";
                 }
-                if (!canAfford(p, price)) return ChatColor.RED + "Can't afford enchantment!";
+                if (!api.canAfford(p, price)) return ChatColor.RED + "Can't afford enchantment!";
                 if ((item.containsEnchantment(enchant)) && (item.getEnchantmentLevel(enchant) <= level)) return ChatColor.RED + "Item is already enchanted!";
                 balance.put(p.getName(), Integer.valueOf(((Integer) balance.get(p.getName())).intValue() - price));
                 transfers.add(new Transfer(p.getName(), null, price, Transfer.SIGN_PURCHASE));
@@ -206,10 +206,6 @@ public class CurrencyMain extends JavaPlugin implements Listener {
         }
 
         return ChatColor.LIGHT_PURPLE + "Money plugin failed somewhere..";
-    }
-
-    boolean canAfford(Player p, int amount) {
-        return (p.isOp()) || (((Integer) balance.get(p.getName())).intValue() - amount > 0);
     }
 
     boolean getBalance(CommandSender sender, String[] args) {
@@ -248,7 +244,7 @@ public class CurrencyMain extends JavaPlugin implements Listener {
             Player p = Bukkit.getPlayerExact(sender.getName());
             if ((p != null) && (!p.isOp())) money = Math.abs(money);
             if (receiver != null) {
-                if ((p != null) && (!canAfford(p, money))) {
+                if ((p != null) && (!api.canAfford(p, money))) {
                     sender.sendMessage(ChatColor.GREEN + "You can't afford to pay him $" + money);
                     return;
                 }

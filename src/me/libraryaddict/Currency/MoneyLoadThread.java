@@ -9,7 +9,7 @@ import java.sql.Statement;
 
 public class MoneyLoadThread extends Thread {
     public Connection con = null;
-    CurrencyMain plugin;
+    private CurrencyMain plugin;
 
     MoneyLoadThread(CurrencyMain MoneySystem) {
         this.plugin = MoneySystem;
@@ -68,8 +68,8 @@ public class MoneyLoadThread extends Thread {
         System.out.println("Money load thread started");
         SQLconnect();
         while (true) {
-            if (CurrencyMain.refreshers.peek() != null) {
-                String playername = (String) CurrencyMain.refreshers.poll();
+            if (plugin.refreshers.peek() != null) {
+                String playername = plugin.refreshers.poll();
                 try {
                     Statement stmt = this.con.createStatement();
                     ResultSet r = stmt.executeQuery("SELECT * FROM `AGMoney` WHERE `Name` = '" + playername + "' ;");
@@ -83,14 +83,14 @@ public class MoneyLoadThread extends Thread {
                             Statement stamt = this.con.createStatement();
                             stamt.executeUpdate(insert);
                             stamt.close();
-                            CurrencyMain.refreshers.add(playername);
+                            plugin.refreshers.add(playername);
                         } catch (SQLException ex) {
                             System.err.println("[MoneyLoadThread] MySql error while creating new balance for " + playername + ", Error: " + ex);
                         } catch (NullPointerException ex) {
                             System.err.println("[MoneyLoadThread] MySql error while creating new balance for " + playername + ", Error: " + ex);
                         }
                     } else {
-                        CurrencyMain.balance.put(playername, Integer.valueOf(r.getInt("Money")));
+                        plugin.balance.put(playername, r.getInt("Money"));
                         stmt.close();
                         r.close();
                     }
@@ -100,7 +100,7 @@ public class MoneyLoadThread extends Thread {
                     System.out.println("[MoneyLoadThread] Error while fetching " + playername + "'s Money: " + ex);
                 }
             }
-            if (CurrencyMain.refreshers.peek() == null) try {
+            if (plugin.refreshers.peek() == null) try {
                 Thread.currentThread();
                 Thread.sleep(1000L);
             } catch (InterruptedException localInterruptedException) {
