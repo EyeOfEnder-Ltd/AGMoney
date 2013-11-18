@@ -56,7 +56,7 @@ public class CurrencyListeners implements Listener {
     @EventHandler
     public void onInteract(PlayerInteractEvent event) {
         if (event.isCancelled()) return;
-        if ((event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) && (event.getClickedBlock().getType() == Material.WALL_SIGN)) {
+        if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK) && event.getClickedBlock().getType() == Material.WALL_SIGN) {
             org.bukkit.block.Sign sign = (org.bukkit.block.Sign) event.getClickedBlock().getState();
 
             if (!ChatColor.stripColor(sign.getLine(0)).equalsIgnoreCase(sign.getLine(0))) {

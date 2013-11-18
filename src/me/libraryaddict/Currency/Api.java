@@ -14,7 +14,7 @@ public class Api {
             withdraw(sender, amount);
         }
 
-        if (!main.balance.contains(receiver)) main.balance.put(receiver, 0);
+        if (!main.balance.contains(receiver)) refresh(receiver);
         main.balance.put(receiver, main.balance.get(receiver) + amount);
         main.transfers.add(new Transfer(sender, receiver, amount, message ? Transfer.MONEY_GIVE : Transfer.SILENT));
     }
@@ -24,18 +24,19 @@ public class Api {
     }
 
     public void withdraw(String player, int amount) {
-        if (!main.balance.contains(player)) main.balance.put(player, 0);
+        if (!main.balance.contains(player)) refresh(player);
         main.balance.put(player, main.balance.get(player) - amount);
         main.transfers.add(new Transfer(null, player, -amount, Transfer.SILENT));
     }
 
     public void refresh(String player) {
-        main.refreshers.add(player);
+        main.balance.put(player, 0);
+        main.loadThread.refresh(player);
     }
 
     public boolean canAfford(Player player, int amount) {
-        if (!main.balance.contains(player.getName())) main.balance.put(player.getName(), 0);
-        return player.isOp() || (main.balance.get(player.getName()) - amount) > 0;
+        if (!main.balance.contains(player.getName())) refresh(player.getName());
+        return main.balance.get(player.getName()) - amount > 0;
     }
 
 }

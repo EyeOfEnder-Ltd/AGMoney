@@ -33,7 +33,7 @@ public class CurrencyMain extends JavaPlugin implements Listener {
     public ConcurrentLinkedQueue<Transfer> transfers = new ConcurrentLinkedQueue<Transfer>();
     public ConcurrentLinkedQueue<String> refreshers = new ConcurrentLinkedQueue<String>();
     public ConcurrentHashMap<String, Integer> balance = new ConcurrentHashMap<String, Integer>();
-    MoneyLoadThread loadThread = new MoneyLoadThread(this);
+    MoneyLoad loadThread;
     MoneySaveThread saveThread = new MoneySaveThread(this);
     public String SQL_USER;
     public String SQL_PASS;
@@ -82,12 +82,15 @@ public class CurrencyMain extends JavaPlugin implements Listener {
         SQL_PASS = config.getPassword();
         SQL_HOST = config.getHost();
         SQL_DATA = config.getDatabase();
-        this.loadThread.start();
+
+        loadThread = new MoneyLoad(this);
+        loadThread.SQLconnect();
+
         this.saveThread.start();
     }
 
     public void onDisable() {
-        this.loadThread.stop();
+        loadThread.SQLdisconnect();
         while (transfers.size() > 0)
             try {
                 System.out.println("Waiting for saveQueue, " + transfers.size() + " left! Save thread dead: " + (!this.saveThread.isAlive()));
@@ -102,9 +105,8 @@ public class CurrencyMain extends JavaPlugin implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player p = event.getPlayer();
-        balance.put(p.getName(), Integer.valueOf(0));
-        refreshers.add(p.getName());
-        if (!this.loadThread.isAlive()) System.out.println("Load thread is dead");
+        balance.put(p.getName(), 0);
+        api.refresh(p.getName());
         if (!this.saveThread.isAlive()) System.out.println("Save thread is dead");
     }
 
@@ -114,7 +116,7 @@ public class CurrencyMain extends JavaPlugin implements Listener {
         balance.remove(p.getName());
     }
 
-    void transferComplete(Transfer transfer) {
+    protected void transferComplete(Transfer transfer) {
         if (transfer.getType() == null) return;
         if (transfer.getType().equals(Transfer.PLAYER_PAYMENT)) {
             Player sender = Bukkit.getPlayerExact(transfer.getSender());
@@ -141,7 +143,7 @@ public class CurrencyMain extends JavaPlugin implements Listener {
         }
     }
 
-    boolean canFit(Player p, ItemStack[] items) {
+    private boolean canFit(Player p, ItemStack[] items) {
         Inventory inv = Bukkit.createInventory(null, p.getInventory().getContents().length);
         for (int i = 0; i < inv.getSize(); i++)
             if ((p.getInventory().getItem(i) != null) && (p.getInventory().getItem(i).getType() != Material.AIR)) {
@@ -156,7 +158,7 @@ public class CurrencyMain extends JavaPlugin implements Listener {
         return true;
     }
 
-    String signPurchase(Player p, Sign sign) {
+    protected String signPurchase(Player p, Sign sign) {
         if (ChatColor.stripColor(sign.getLine(0)).equals("[Buy]")) {
             int amount = Integer.parseInt(sign.getLine(1));
             ItemStack item = null;
@@ -175,8 +177,7 @@ public class CurrencyMain extends JavaPlugin implements Listener {
                 item.setAmount(1);
                 for (int i = 0; i < amount; i++)
                     p.getInventory().addItem(new ItemStack[] { item });
-                balance.put(p.getName(), Integer.valueOf(((Integer) balance.get(p.getName())).intValue() - price));
-                transfers.add(new Transfer(p.getName(), null, price, Transfer.SIGN_PURCHASE));
+                api.withdraw(p.getName(), price);
                 p.updateInventory();
                 return ChatColor.RED + "Item purchased for $" + price;
             }
@@ -208,7 +209,7 @@ public class CurrencyMain extends JavaPlugin implements Listener {
         return ChatColor.LIGHT_PURPLE + "Money plugin failed somewhere..";
     }
 
-    boolean getBalance(CommandSender sender, String[] args) {
+    private boolean getBalance(CommandSender sender, String[] args) {
         Player p = Bukkit.getPlayerExact(sender.getName());
         if (args.length > 0) {
             Player p1 = Bukkit.getPlayer(args[0]);
@@ -216,6 +217,7 @@ public class CurrencyMain extends JavaPlugin implements Listener {
                 sender.sendMessage(ChatColor.RED + "Error: " + ChatColor.DARK_RED + "Player not found");
                 return true;
             }
+            api.refresh(p1.getName());
             sender.sendMessage(ChatColor.GREEN + p1.getName() + "'s money: " + ChatColor.RED + "$" + balance.get(p1.getName()));
             return true;
         }
@@ -227,7 +229,7 @@ public class CurrencyMain extends JavaPlugin implements Listener {
         return true;
     }
 
-    void pay(CommandSender sender, String[] args) {
+    private void pay(CommandSender sender, String[] args) {
         if (args.length > 1) {
             int money = 0;
             if (isNumeric(args[1])) {
@@ -242,7 +244,7 @@ public class CurrencyMain extends JavaPlugin implements Listener {
             }
             Player receiver = Bukkit.getPlayer(args[0]);
             Player p = Bukkit.getPlayerExact(sender.getName());
-            if ((p != null) && (!p.isOp())) money = Math.abs(money);
+            if (p != null && !p.isOp()) money = Math.abs(money);
             if (receiver != null) {
                 if ((p != null) && (!api.canAfford(p, money))) {
                     sender.sendMessage(ChatColor.GREEN + "You can't afford to pay them $" + money);
