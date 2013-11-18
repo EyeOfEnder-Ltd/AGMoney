@@ -245,12 +245,10 @@ public class CurrencyMain extends JavaPlugin implements Listener {
             if ((p != null) && (!p.isOp())) money = Math.abs(money);
             if (receiver != null) {
                 if ((p != null) && (!api.canAfford(p, money))) {
-                    sender.sendMessage(ChatColor.GREEN + "You can't afford to pay him $" + money);
+                    sender.sendMessage(ChatColor.GREEN + "You can't afford to pay them $" + money);
                     return;
                 }
-                if (p != null) api.pay(sender.getName(), receiver.getName(), money, true);
-                else
-                    api.pay(receiver.getName(), money, true);
+                api.pay(sender.getName(), receiver.getName(), money, true);
                 return;
             }
             if (receiver == null) sender.sendMessage(ChatColor.GREEN + "Player not found");
