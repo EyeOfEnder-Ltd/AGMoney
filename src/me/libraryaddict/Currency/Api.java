@@ -34,7 +34,7 @@ public class Api {
     }
 
     public boolean canAfford(Player player, int amount) {
-        if (!main.balance.contains(player)) main.balance.put(player.getName(), 0);
+        if (!main.balance.contains(player.getName())) main.balance.put(player.getName(), 0);
         return player.isOp() || (main.balance.get(player.getName()) - amount) > 0;
     }
 
