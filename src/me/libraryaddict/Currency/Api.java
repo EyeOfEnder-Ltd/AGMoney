@@ -1,8 +1,5 @@
 package me.libraryaddict.Currency;
 
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
-
 public class Api {
     CurrencyMain main;
 

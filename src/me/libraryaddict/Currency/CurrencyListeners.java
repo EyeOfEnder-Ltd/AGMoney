@@ -1,6 +1,5 @@
 package me.libraryaddict.Currency;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import me.libraryaddict.Hungergames.HungergamesApi;
@@ -18,6 +17,8 @@ import org.bukkit.event.block.BlockBurnEvent;
 import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+
+import com.google.common.collect.Lists;
 
 public class CurrencyListeners implements Listener {
     CurrencyMain main;
@@ -41,7 +42,7 @@ public class CurrencyListeners implements Listener {
 
     @EventHandler
     public void onExplode(EntityExplodeEvent event) {
-        List remove = new ArrayList();
+        List<Block> remove = Lists.newArrayList();
         for (Block block : event.blockList())
             if (isSign(block)) remove.add(block);
         event.blockList().removeAll(remove);

@@ -1,15 +1,12 @@
 package me.libraryaddict.Currency;
 
-import java.io.PrintStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
+
 import org.bukkit.Bukkit;
-import org.bukkit.scheduler.BukkitScheduler;
 
 public class MoneySaveThread extends Thread {
     CurrencyMain plugin;

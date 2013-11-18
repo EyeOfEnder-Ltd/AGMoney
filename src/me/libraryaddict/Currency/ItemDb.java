@@ -1,16 +1,17 @@
 package me.libraryaddict.Currency;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
+import com.google.common.collect.Maps;
+
 public class ItemDb {
-    private final transient Map<String, Long> items = new HashMap();
+    private final transient Map<String, Long> items = Maps.newHashMap();
     private final transient ManagedFile file;
     private static final Pattern SPLIT = Pattern.compile("[^a-zA-Z0-9]");
 

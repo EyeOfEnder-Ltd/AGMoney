@@ -1,14 +1,11 @@
 package me.libraryaddict.Currency;
 
-import java.io.PrintStream;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class MoneyLoadThread extends Thread {
     public Connection con = null;

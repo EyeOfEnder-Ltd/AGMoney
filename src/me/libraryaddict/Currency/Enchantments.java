@@ -1,18 +1,18 @@
 package me.libraryaddict.Currency;
 
-import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.bukkit.enchantments.Enchantment;
+
+import com.google.common.collect.Maps;
 
 public class Enchantments {
     private static final transient Pattern NUMPATTERN = Pattern.compile("\\d+");
-    private static final Map<String, Enchantment> ENCHANTMENTS = new HashMap();
-    private static final Map<String, Enchantment> ALIASENCHANTMENTS = new HashMap();
+    private static final Map<String, Enchantment> ENCHANTMENTS = Maps.newHashMap();
+    private static final Map<String, Enchantment> ALIASENCHANTMENTS = Maps.newHashMap();
 
     static {
         ENCHANTMENTS.put("alldamage", Enchantment.DAMAGE_ALL);

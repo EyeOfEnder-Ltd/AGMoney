@@ -27,10 +27,12 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.google.common.collect.Lists;
+
 public class CurrencyMain extends JavaPlugin implements Listener {
-    public static ConcurrentLinkedQueue<Transfer> transfers = new ConcurrentLinkedQueue();
-    public static ConcurrentLinkedQueue<String> refreshers = new ConcurrentLinkedQueue();
-    public static ConcurrentHashMap<String, Integer> balance = new ConcurrentHashMap();
+    public static ConcurrentLinkedQueue<Transfer> transfers = new ConcurrentLinkedQueue<Transfer>();
+    public static ConcurrentLinkedQueue<String> refreshers = new ConcurrentLinkedQueue<String>();
+    public static ConcurrentHashMap<String, Integer> balance = new ConcurrentHashMap<String, Integer>();
     MoneyLoadThread loadThread = new MoneyLoadThread(this);
     MoneySaveThread saveThread = new MoneySaveThread(this);
     public String SQL_USER;
@@ -48,7 +50,7 @@ public class CurrencyMain extends JavaPlugin implements Listener {
     }
 
     public synchronized ArrayList<String> getLogs(String key) {
-        ArrayList lines = new ArrayList();
+        ArrayList<String> lines = Lists.newArrayList();
         try {
             FileInputStream fstream = new FileInputStream("Money.log");
 
@@ -146,7 +148,7 @@ public class CurrencyMain extends JavaPlugin implements Listener {
                 inv.setItem(i, p.getInventory().getItem(i).clone());
             }
         for (ItemStack i : items) {
-            HashMap item = inv.addItem(new ItemStack[] { i });
+            HashMap<Integer, ItemStack> item = inv.addItem(new ItemStack[] { i });
             if ((item != null) && (!item.isEmpty())) {
                 return false;
             }
@@ -282,7 +284,7 @@ public class CurrencyMain extends JavaPlugin implements Listener {
                 sender.sendMessage(ChatColor.LIGHT_PURPLE + "You need to use a arguement. Or its gonna fucking spam");
                 return true;
             }
-            ArrayList lines = getLogs(StringUtils.join(args, " "));
+            ArrayList<String> lines = getLogs(StringUtils.join(args, " "));
             if (lines.size() == 0) sender.sendMessage(ChatColor.LIGHT_PURPLE + "No money logs found for '" + StringUtils.join(args, " ") + "'");
             else {
                 for (int i = lines.size() - 1; (i >= 0) && (i >= lines.size() - 20); i--)

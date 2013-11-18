@@ -15,15 +15,15 @@ import java.security.DigestInputStream;
 import java.security.DigestOutputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
-import java.util.logging.Logger;
+
 import org.bukkit.Bukkit;
 
+import com.google.common.collect.Lists;
+
 public class ManagedFile {
-    private static final int BUFFERSIZE = 8192;
     private final transient File file;
 
     public ManagedFile(String filename) {
@@ -121,7 +121,6 @@ public class ManagedFile {
             } finally {
             }
         } finally {
-            BufferedReader reader;
             bis.close();
         }
         bis.close();
@@ -141,7 +140,7 @@ public class ManagedFile {
         try {
             BufferedReader reader = new BufferedReader(new FileReader(this.file));
             try {
-                List lines = new ArrayList();
+                List<String> lines = Lists.newArrayList();
                 while (true) {
                     String line = reader.readLine();
                     if (line == null) {
