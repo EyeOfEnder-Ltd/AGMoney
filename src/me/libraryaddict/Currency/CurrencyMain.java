@@ -283,7 +283,7 @@ public class CurrencyMain extends JavaPlugin implements Listener {
                     sender.sendMessage((String) lines.get(i));
             }
         } else if (cmd.getName().equalsIgnoreCase("setbal")) {
-            if (sender.isOp()) return false;
+            if (!sender.isOp()) return false;
             if (args.length < 2) {
                 sender.sendMessage(ChatColor.RED + "Usage: /setbal <player> <balance>");
                 return true;
