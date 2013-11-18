@@ -283,10 +283,10 @@ public class CurrencyMain extends JavaPlugin implements Listener {
                     sender.sendMessage((String) lines.get(i));
             }
         } else if (cmd.getName().equalsIgnoreCase("setbal")) {
-            if (!sender.isOp()) return false;
+            if (!sender.isOp()) return true;
             if (args.length < 2) {
-                sender.sendMessage(ChatColor.RED + "Usage: /setbal <player> <balance>");
-                return true;
+                sender.sendMessage(ChatColor.RED + "Incorrect usage.");
+                return false;
             }
 
             Player target = Bukkit.getPlayer(args[0]);
@@ -308,7 +308,7 @@ public class CurrencyMain extends JavaPlugin implements Listener {
 
             balance.put(target.getName(), money);
             transfers.add(new Transfer(null, target.getName(), diff, Transfer.MONEY_SET));
-            sender.sendMessage(ChatColor.GREEN + "Set " + target.getDisplayName() + "'s balance to $" + money + ".");
+            sender.sendMessage(ChatColor.GREEN + "Set " + target.getName() + "'s balance to $" + money + ".");
         } else if (cmd.getName().equalsIgnoreCase("money")) {
             if (args.length == 0) {
                 getBalance(sender, args);
