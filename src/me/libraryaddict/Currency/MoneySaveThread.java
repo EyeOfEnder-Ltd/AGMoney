@@ -11,6 +11,7 @@ import org.bukkit.Bukkit;
 public class MoneySaveThread extends Thread {
     CurrencyMain plugin;
     public Connection con = null;
+    private boolean running;
 
     public MoneySaveThread(CurrencyMain Money) {
         this.plugin = Money;
@@ -42,10 +43,15 @@ public class MoneySaveThread extends Thread {
         }
     }
 
+    public void terminate() {
+        running = false;
+    }
+
     public void run() {
         System.out.println("Money Save Thread started");
         SQLconnect();
-        while (true) {
+        running = true;
+        while (running) {
             if (plugin.transfers.peek() != null) {
                 final Transfer transfer = plugin.transfers.poll();
                 String[] name = { transfer.getSender(), transfer.getReceiver() };

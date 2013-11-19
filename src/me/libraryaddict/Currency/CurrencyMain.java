@@ -99,7 +99,7 @@ public class CurrencyMain extends JavaPlugin implements Listener {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-        this.saveThread.stop();
+        this.saveThread.terminate();
     }
 
     @EventHandler
@@ -158,6 +158,7 @@ public class CurrencyMain extends JavaPlugin implements Listener {
         return true;
     }
 
+    @SuppressWarnings("deprecation")
     protected String signPurchase(Player p, Sign sign) {
         if (ChatColor.stripColor(sign.getLine(0)).equals("[Buy]")) {
             int amount = Integer.parseInt(sign.getLine(1));
